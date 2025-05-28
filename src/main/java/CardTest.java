@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class CardTest {
     public static void main(String[] args) {
         // 初始化卡牌管理器
-        CardManager cardManager = new CardManager();
+        CardManager cardManager =CardManager.getInstance();
 
         // 初始化玩家
         Player player1 = new Player();

@@ -1,14 +1,13 @@
 package player;
 
 import card.Card;
-import card.impl.SpecialActionCard;
 import card.impl.TreasureCard;
-
+import card.impl.SpecialActionCard;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerCardHandler {
-    private List<Card> cards;
+    private final List<Card> cards;
     private static final int MAX_HAND_SIZE = 5;
 
     public PlayerCardHandler() {

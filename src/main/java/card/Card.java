@@ -1,18 +1,16 @@
 package card;
 
-
 import player.Player;
+import game.GameState;
 
 public abstract class Card {
-    // Card type enumeration
     public enum CardType {
-        TREASURE,       // Treasure Cards
-        SPECIAL_ACTION, // Special Ops Cards
-        WATERS_RISE,    // Water level rise card
-        FLOOD           // Flood card
+        TREASURE,
+        SPECIAL_ACTION,
+        WATERS_RISE,
+        FLOOD
     }
 
-    // Treasure type enumeration
     public enum TreasureType {
         CRYSTAL_OF_FIRE,
         STATUE_OF_THE_WIND,
@@ -20,31 +18,42 @@ public abstract class Card {
         EARTH_STONE
     }
 
-    // Special Ops Card Type Enumeration
     public enum SpecialActionType {
         HELICOPTER_LIFT,
         SANDBAGS
     }
 
-    private int id;
+    private static int ID_COUNT = 0;
+    private final int id;
     protected CardType type;
     private String imagePath;
     private String description;
 
-
     public Card(CardType type) {
+        this.id = ID_COUNT++;
         this.type = type;
     }
 
     /**
-     * The card function interface is used to realize the specific purpose of various cards
-     * @param player
+     * Perform card functions
+     * @param player Players who use cards
+     * @param gameState The current state of the game
+     * @return Whether the execution was successful
      */
-    public abstract void func(Player player);
-
-    public CardType getType() {
-        return type;
-    }
+    public abstract boolean func(Player player, GameState gameState);
 
     public abstract String getName();
+
+    public int getId() { return id; }
+    public CardType getType() { return type; }
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String path) { this.imagePath = path; }
+    public String getDescription() { return description; }
+    public void setDescription(String desc) { this.description = desc; }
+
+
+    @Override
+    public String toString() {
+        return "Card{id=" + id + ", type=" + type + ", name=" + getName() + "}";
+    }
 }

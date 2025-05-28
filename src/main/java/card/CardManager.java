@@ -2,8 +2,8 @@ package card;
 
 import card.impl.FloodCard;
 import card.impl.SpecialActionCard;
-import card.impl.TreasureCard;
 import card.impl.WatersRiseCard;
+import card.impl.TreasureCard;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,12 +11,15 @@ import java.util.List;
 import java.util.Stack;
 
 public class CardManager {
+    public static CardManager instance;
     private Stack<Card> treasureDeck;
     private Stack<Card> treasureDiscard;
     private Stack<Card> floodDeck;
     private Stack<Card> floodDiscard;
 
-    public CardManager() {
+    private final List<Card> cardList = new ArrayList<>();
+
+    private CardManager() {
         initializeDecks();
     }
 
@@ -140,5 +143,22 @@ public class CardManager {
         return String.format("宝藏牌堆: %d张, 宝藏弃牌堆: %d张, 洪水牌堆: %d张, 洪水弃牌堆: %d张",
                 treasureDeck.size(), treasureDiscard.size(),
                 floodDeck.size(), floodDiscard.size());
+    }
+
+
+    public static CardManager getInstance() {
+        if (instance == null) instance = new CardManager();
+        return instance;
+    }
+
+    public void reshuffleFloodDiscard() {
+        if (!floodDiscard.isEmpty()) {
+            System.out.println("重置洪水牌堆：将" + floodDiscard.size() + "张牌洗入牌堆");
+            Collections.shuffle(floodDiscard);
+            floodDeck.addAll(0, floodDiscard); // 添加到牌堆顶部
+            floodDiscard.clear();
+        } else {
+            System.out.println("洪水弃牌堆为空，无需重置");
+        }
     }
 }
