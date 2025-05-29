@@ -22,7 +22,7 @@ public class TreasureCard extends Card {
             return false;
         }
 
-        // 检查玩家是否有足够的同类型宝藏卡
+        // Check if the player has enough treasure cards of the same type
         int cardCount = player.getPlayerCardHandler()
                 .getTreasureCards()
                 .size();
@@ -36,7 +36,7 @@ public class TreasureCard extends Card {
         boolean success = gameState.claimTreasure(player, treasureType);
 
         if (success) {
-            // 从玩家手牌中移除4张宝藏卡
+            // Remove 4 Treasure Cards from the player's hand
             player.getPlayerCardHandler().discardCardsByType(CardType.TREASURE);
             System.out.println(player.getName() + "Successfully redeemed" + treasureType + "BURIED TREASURE！");
         }

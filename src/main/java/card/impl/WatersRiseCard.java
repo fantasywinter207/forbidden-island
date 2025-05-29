@@ -20,7 +20,7 @@ public class WatersRiseCard extends Card {
             return false;
         }
 
-        // 1. 增加水位
+        // 1. Increase the water level
         int previousWaterLevel = gameState.getWaterLevel();
         gameState.increaseWaterLevel();
         int newWaterLevel = gameState.getWaterLevel();

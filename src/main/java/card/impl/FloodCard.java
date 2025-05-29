@@ -16,7 +16,7 @@ public class FloodCard extends Card {
 
     @Override
     public boolean func(Player player, GameState gameState) {
-        // 获取对应岛屿板块
+        // Get the corresponding island plate
         IslandTile tile = gameState.getIslandTile(tileName);
         if (tile == null) {
             System.err.println("Error: Island plate not found " + tileName);

@@ -44,7 +44,7 @@ public class SpecialActionCard extends Card {
 
                 // Execute sandbag protection logic
                 if (tile.isSunk()) {
-                    System.out.println("无法保护已沉没的板块: " + tileName);
+                    System.out.println("It is not possible to protect the sunken plate: " + tileName);
                     return false;
                 }
 
@@ -53,7 +53,7 @@ public class SpecialActionCard extends Card {
                     tile.restore(); //
                     System.out.println("Successful use of sandbags！" + tileName + " Return to a normal state");
                 } else {
-                    // 防止板块被淹没
+                    // Prevent the plates from being submerged
                     System.out.println("Successful use of sandbags！" + tileName + " WILL NOT BE OVERWHELMED");
                 }
 

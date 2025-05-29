@@ -124,11 +124,11 @@ public class CardManager {
                     System.out.println("Both the flood and discard piles are empty and cannot be drawn");
                     break;
                 }
-                reshuffleFloodDiscard(); // 洗牌弃牌堆
+                reshuffleFloodDiscard(); // Shuffle the discard pile
             }
 
             Card card = floodDeck.pop();
-            floodDiscard.push(card); // 洪水卡使用后进入弃牌堆
+            floodDiscard.push(card); // Flood cards go to the discard pile after being used
             drawnCards.add(card);
 
             System.out.println("drawn: " + card.getName());
