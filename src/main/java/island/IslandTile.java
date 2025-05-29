@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IslandTile {
+
     public enum TileState {
-        NORMAL,   // 正常
-        FLOODED,  // 被淹没
-        SUNK      // 已沉没
+        NORMAL,   // normal
+        FLOODED,  // flooded
+        SUNK      // sunk
     }
 
     private final String name;
@@ -21,34 +22,37 @@ public class IslandTile {
         this.state = TileState.NORMAL;
     }
 
-    // 淹没板块
+    // Submerged plates
     public void flood() {
         if (state == TileState.NORMAL) {
             state = TileState.FLOODED;
         }
     }
 
-    // 沉没板块
+    // Sunken plates
     public void sink() {
         if (state == TileState.FLOODED) {
             state = TileState.SUNK;
         }
     }
 
-    // 玩家登上板块
+    // Players ascend to the board
     public void addPlayer(Player player) {
         playersOnTile.add(player);
         player.setCurrentTile(this);
     }
 
-    // 玩家离开板块
+    // The player leaves the board
     public void removePlayer(Player player) {
         playersOnTile.remove(player);
     }
 
-    // 检查板块是否可通行
+    // Check if the plate is passable
     public boolean isPassable() {
         return state != TileState.SUNK;
+    }
+
+    public void restore() {
     }
 
     // Getters

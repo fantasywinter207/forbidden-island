@@ -4,6 +4,7 @@ import card.impl.FloodCard;
 import card.impl.SpecialActionCard;
 import card.impl.WatersRiseCard;
 import card.impl.TreasureCard;
+import game.GameState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,20 +24,20 @@ public class CardManager {
         initializeDecks();
     }
 
-    // 初始化所有牌堆
+    // Initialize all decks
     private void initializeDecks() {
-        // 初始化宝藏牌堆
+        // Initialize the Treasure pile
         treasureDeck = new Stack<>();
         treasureDiscard = new Stack<>();
 
-        // 添加宝藏卡 (每种5张)
+        // Add Treasure Cards (5 of each)
         for (Card.TreasureType type : Card.TreasureType.values()) {
             for (int i = 0; i < 5; i++) {
                 treasureDeck.push(new TreasureCard(type));
             }
         }
 
-        // 添加特殊行动卡
+        // Add Special Ops Cards
         for (int i = 0; i < 3; i++) {
             treasureDeck.push(new SpecialActionCard(Card.SpecialActionType.HELICOPTER_LIFT));
         }
@@ -44,38 +45,38 @@ public class CardManager {
             treasureDeck.push(new SpecialActionCard(Card.SpecialActionType.SANDBAGS));
         }
 
-        // 添加水位上升卡
+        // Add a water level rise card
         for (int i = 0; i < 3; i++) {
             treasureDeck.push(new WatersRiseCard());
         }
 
-        // 洗混宝藏牌堆
+        // Shuffle the Treasure pile
         Collections.shuffle(treasureDeck);
 
-        // 初始化洪水牌堆
+        // Initialize the Flood deck
         floodDeck = new Stack<>();
         floodDiscard = new Stack<>();
 
-        // 添加洪水卡 (假设有24个岛屿板块)
-        String[] tileNames = {"Fools' Landing", "Breakers Bridge", "Cave of Embers", /* 其他板块名称 */};
+        // Add Flood Card (assuming there are 24 island tiles)
+        String[] tileNames = {"Fools' Landing", "Breakers Bridge", "Cave of Embers", /* Other plate names */};
         for (String tileName : tileNames) {
             floodDeck.push(new FloodCard(tileName));
         }
 
-        // 洗混洪水牌堆
+        // Shuffle the flood pile
         Collections.shuffle(floodDeck);
     }
 
-    // 从宝藏牌堆抽牌
+    // Draw cards from the treasure pile
     public List<Card> drawTreasureCards(int count) {
         List<Card> drawnCards = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
             if (treasureDeck.isEmpty()) {
                 if (treasureDiscard.isEmpty()) {
-                    break; // 无牌可抽
+                    break; // No cards to draw
                 }
-                // 洗混弃牌堆作为新牌堆
+                // Shuffle the discard piles as new piles
                 Collections.shuffle(treasureDiscard);
                 treasureDeck.addAll(treasureDiscard);
                 treasureDiscard.clear();
@@ -83,10 +84,10 @@ public class CardManager {
 
             Card card = treasureDeck.pop();
 
-            // 处理水位上升卡
+            // Handle the water level rise card
             if (card.getType() == Card.CardType.WATERS_RISE) {
                 handleWatersRise();
-                // 不加入手牌，继续抽下一张
+                // Don't add a card to your hand and move on to the next one
                 i--;
                 continue;
             }
@@ -97,50 +98,53 @@ public class CardManager {
         return drawnCards;
     }
 
-    // 处理水位上升卡
+    // Handle the water level rise card
     private void handleWatersRise() {
-        // 1. 水位上升逻辑 (需要与游戏状态交互)
-        // gameState.increaseWaterLevel();
+        // 1. Water level rise logic
+        GameState.getGameState().increaseWaterLevel();
 
-        // 2. 洗混洪水弃牌堆并放回牌堆顶部
+        // 2. Shuffle the flood discard pile and put it back on top
         if (!floodDiscard.isEmpty()) {
             Collections.shuffle(floodDiscard);
-            floodDeck.addAll(0, floodDiscard); // 加到牌堆顶部
+            floodDeck.addAll(0, floodDiscard); // Add to the top of the pile
             floodDiscard.clear();
         }
     }
 
-    // 从洪水牌堆抽牌
-    public List<Card> drawFloodCards(int count) {
+    // Draw cards from the flood pile
+    public List<Card> drawFloodCards() {
+        int count = Math.min(3, GameState.getGameState().getWaterLevel() + 1); // 水位0抽1张，水位1抽2张，依此类推
         List<Card> drawnCards = new ArrayList<>();
+
+        System.out.println("\n=== ABSTRACTING " + count + " Flood cards ===");
 
         for (int i = 0; i < count; i++) {
             if (floodDeck.isEmpty()) {
                 if (floodDiscard.isEmpty()) {
-                    break; // 无牌可抽
+                    System.out.println("Both the flood and discard piles are empty and cannot be drawn");
+                    break;
                 }
-                // 洗混弃牌堆作为新牌堆
-                Collections.shuffle(floodDiscard);
-                floodDeck.addAll(floodDiscard);
-                floodDiscard.clear();
+                reshuffleFloodDiscard(); // 洗牌弃牌堆
             }
 
             Card card = floodDeck.pop();
             floodDiscard.push(card); // 洪水卡使用后进入弃牌堆
             drawnCards.add(card);
+
+            System.out.println("drawn: " + card.getName());
         }
 
         return drawnCards;
     }
 
-    // 弃牌到宝藏弃牌堆
+    // Fold to the treasure discard pile
     public void discardToTreasurePile(Card card) {
         treasureDiscard.push(card);
     }
 
     // 获取当前牌堆状态
     public String getDeckStatus() {
-        return String.format("宝藏牌堆: %d张, 宝藏弃牌堆: %d张, 洪水牌堆: %d张, 洪水弃牌堆: %d张",
+        return String.format("Treasure pile: %d, Treasure discard pile: %d, Flood pile: %d, Flood discard: %d",
                 treasureDeck.size(), treasureDiscard.size(),
                 floodDeck.size(), floodDiscard.size());
     }
@@ -153,12 +157,12 @@ public class CardManager {
 
     public void reshuffleFloodDiscard() {
         if (!floodDiscard.isEmpty()) {
-            System.out.println("重置洪水牌堆：将" + floodDiscard.size() + "张牌洗入牌堆");
+            System.out.println("Reset Flood deck: Will" + floodDiscard.size() + "Cards are shuffled into the pile");
             Collections.shuffle(floodDiscard);
             floodDeck.addAll(0, floodDiscard); // 添加到牌堆顶部
             floodDiscard.clear();
         } else {
-            System.out.println("洪水弃牌堆为空，无需重置");
+            System.out.println("The flood discard pile is empty and does not need to be reset");
         }
     }
 }

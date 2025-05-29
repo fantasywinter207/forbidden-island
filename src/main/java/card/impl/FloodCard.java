@@ -19,20 +19,19 @@ public class FloodCard extends Card {
         // 获取对应岛屿板块
         IslandTile tile = gameState.getIslandTile(tileName);
         if (tile == null) {
-            System.err.println("错误：未找到岛屿板块 " + tileName);
+            System.err.println("Error: Island plate not found " + tileName);
             return false;
         }
-
-        // 执行洪水效果
+        // Performs the Flood effect
         if (!tile.isFlooded()) {
-            // 未淹没 → 淹没
+            // UnSubmerged → Submerged
             tile.flood();
-            System.out.println(tileName + " 已被淹没！");
+            System.out.println(tileName + " HAS BEEN SUBMERGED！");
         } else {
-            // 已淹没 → 沉没
+            // Submerged → Sunk
             tile.sink();
-            System.out.println(tileName + " 已沉没！");
-            // 检查是否有玩家在沉没的板块上
+            System.out.println(tileName + " SUNK！");
+            // Check to see if there are any players on the sunken plate
             gameState.handleSunkTile(tileName);
         }
 

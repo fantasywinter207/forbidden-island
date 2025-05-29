@@ -1,6 +1,7 @@
 package card.impl;
 
 import card.Card;
+import island.IslandTile;
 import player.Player;
 import game.GameState;
 
@@ -27,8 +28,35 @@ public class SpecialActionCard extends Card {
             case HELICOPTER_LIFT:
                 return gameState.useHelicopterLift(player);
             case SANDBAGS:
-                // 沙袋卡需要玩家选择要保护的板块
-                String tileToProtect = player.chooseTileToProtect();
+                // Sandbag cards require the player to choose which tile to protect
+                String tileName = player.chooseTileToProtect();
+                if (tileName == null || tileName.isEmpty()) {
+                    System.out.println("The tile to be protected is not selected, and the sandbag card fails to be used");
+                    return false;
+                }
+
+                // Get the corresponding island plate
+                IslandTile tile = gameState.getIslandTile(tileName);
+                if (tile == null) {
+                    System.out.println("The specified island plate could not be found: " + tileName);
+                    return false;
+                }
+
+                // Execute sandbag protection logic
+                if (tile.isSunk()) {
+                    System.out.println("无法保护已沉没的板块: " + tileName);
+                    return false;
+                }
+
+                // If the plate has been submerged, it returns to its normal state
+                if (tile.isFlooded()) {
+                    tile.restore(); //
+                    System.out.println("Successful use of sandbags！" + tileName + " Return to a normal state");
+                } else {
+                    // 防止板块被淹没
+                    System.out.println("Successful use of sandbags！" + tileName + " WILL NOT BE OVERWHELMED");
+                }
+
                 return true;
             default:
                 return false;

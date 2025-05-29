@@ -6,6 +6,7 @@ import player.Player;
 import game.GameState;
 
 public class WatersRiseCard extends Card {
+
     public WatersRiseCard() {
         super(CardType.WATERS_RISE);
         setDescription("Raise water level and reshuffle flood discard pile");
@@ -13,9 +14,28 @@ public class WatersRiseCard extends Card {
 
     @Override
     public boolean func(Player player, GameState gameState) {
-        // 水位上升卡在抽到时自动执行
+        CardManager cardManager = CardManager.getInstance();
+        if (gameState == null || cardManager == null) {
+            System.err.println("GameState or CardManager not initialized for WatersRiseCard");
+            return false;
+        }
+
+        // 1. 增加水位
+        int previousWaterLevel = gameState.getWaterLevel();
         gameState.increaseWaterLevel();
-        CardManager.getInstance().reshuffleFloodDiscard();
+        int newWaterLevel = gameState.getWaterLevel();
+
+        System.out.println("\n=== The water level rise card is triggered ===");
+        System.out.println("Water level from " + previousWaterLevel + " Rise to " + newWaterLevel);
+
+        // 2. Reset the Flood pile
+        cardManager.reshuffleFloodDiscard();
+
+        // 3. Check if the game is failing due to high water level
+        if (newWaterLevel >= gameState.getMaxWaterLevel()) {
+            System.out.println("Warning: The water level reaches its maximum and the game is about to end！");
+            return false;
+        }
         return true;
     }
 
